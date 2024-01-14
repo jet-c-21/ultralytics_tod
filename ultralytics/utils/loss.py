@@ -82,7 +82,8 @@ class BboxLoss(nn.Module):
 
         # loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
         loss_iou = ((1.0 - iou) * weight * (1 / tgt_bbox_area)).sum() / target_scores_sum
-        # print(f"loss_iou: {loss_iou}")
+        print(f"loss_iou: {loss_iou}")
+        # print(f"old_loss_iou: {loss_iou}, new_iou: {new_iou}, factor: {(1 / tgt_bbox_area)}")
 
         # DFL loss
         if self.use_dfl:

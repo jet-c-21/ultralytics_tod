@@ -55,6 +55,9 @@ Pip install the ultralytics package including all [requirements](https://github.
 
 [![PyPI version](https://badge.fury.io/py/ultralytics.svg)](https://badge.fury.io/py/ultralytics) [![Downloads](https://static.pepy.tech/badge/ultralytics)](https://pepy.tech/project/ultralytics)
 
+```shell
+pip install git+https://github.com/jet-c-21/ultralytics_tod.git
+```
 ```bash
 pip install ultralytics
 ```
