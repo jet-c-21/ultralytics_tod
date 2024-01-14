@@ -89,7 +89,7 @@ class Model(nn.Module):
         # Load or create new YOLO model
         model = checks.check_model_file_from_stem(model)  # add suffix, i.e. yolov8n -> yolov8n.pt
         if Path(model).suffix in ('.yaml', '.yml'):
-            self._new(model, task)
+            self._new(model, task)  # construct model object
         else:
             self._load(model, task)
 
@@ -125,6 +125,7 @@ class Model(nn.Module):
         cfg_dict = yaml_model_load(cfg)
         self.cfg = cfg
         self.task = task or guess_model_task(cfg_dict)
+        # DetectionModel.__init__(self, cfg='yolov8n.yaml', ch=3, nc=None, verbose=True)
         self.model = (model or self._smart_load('model'))(cfg_dict, verbose=verbose and RANK == -1)  # build model
         self.overrides['model'] = self.cfg
         self.overrides['task'] = self.task

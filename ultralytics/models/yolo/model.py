@@ -1,4 +1,5 @@
 # Ultralytics YOLO 🚀, AGPL-3.0 license
+import inspect
 
 from ultralytics.engine.model import Model
 from ultralytics.models import yolo  # noqa
@@ -11,24 +12,38 @@ class YOLO(Model):
     @property
     def task_map(self):
         """Map head to model, trainer, validator, and predictor classes."""
-        return {
+        __task_map = {
+            # task
             'classify': {
+                # key
                 'model': ClassificationModel,
                 'trainer': yolo.classify.ClassificationTrainer,
                 'validator': yolo.classify.ClassificationValidator,
-                'predictor': yolo.classify.ClassificationPredictor, },
+                'predictor': yolo.classify.ClassificationPredictor,
+            },
+
+            # task
             'detect': {
+                # key
                 'model': DetectionModel,
                 'trainer': yolo.detect.DetectionTrainer,
                 'validator': yolo.detect.DetectionValidator,
-                'predictor': yolo.detect.DetectionPredictor, },
+                'predictor': yolo.detect.DetectionPredictor,
+            },
+
             'segment': {
                 'model': SegmentationModel,
                 'trainer': yolo.segment.SegmentationTrainer,
                 'validator': yolo.segment.SegmentationValidator,
-                'predictor': yolo.segment.SegmentationPredictor, },
+                'predictor': yolo.segment.SegmentationPredictor,
+            },
+
             'pose': {
                 'model': PoseModel,
                 'trainer': yolo.pose.PoseTrainer,
                 'validator': yolo.pose.PoseValidator,
-                'predictor': yolo.pose.PosePredictor, }, }
+                'predictor': yolo.pose.PosePredictor,
+            },
+        }
+
+        return __task_map

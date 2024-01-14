@@ -1,5 +1,7 @@
 # Ultralytics YOLO 🚀, AGPL-3.0 license
 
+from typing import List, Dict
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -70,8 +72,17 @@ class BboxLoss(nn.Module):
     def forward(self, pred_dist, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask):
         """IoU loss."""
         weight = target_scores.sum(-1)[fg_mask].unsqueeze(-1)
+        # print(f"weight: {weight}")
+
         iou = bbox_iou(pred_bboxes[fg_mask], target_bboxes[fg_mask], xywh=False, CIoU=True)
-        loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
+        tgt_bbox_x1, tgt_bbox_y1, tgt_bbox_x2, tgt_bbox_y2 = target_bboxes[fg_mask].chunk(4, -1)
+        tgt_bbox_w, tgt_bbox_h = tgt_bbox_x2 - tgt_bbox_x1 + 1e-7, tgt_bbox_y2 - tgt_bbox_y1 + 1e-7
+        tgt_bbox_area = tgt_bbox_w * tgt_bbox_h
+        # print(weight * (1 / tgt_bbox_area))
+
+        # loss_iou = ((1.0 - iou) * weight).sum() / target_scores_sum
+        loss_iou = ((1.0 - iou) * weight * (1 / tgt_bbox_area)).sum() / target_scores_sum
+        # print(f"loss_iou: {loss_iou}")
 
         # DFL loss
         if self.use_dfl:
@@ -121,7 +132,7 @@ class v8DetectionLoss:
         h = model.args  # hyperparameters
 
         m = model.model[-1]  # Detect() module
-        self.bce = nn.BCEWithLogitsLoss(reduction='none')
+        self.bce = nn.BCEWithLogitsLoss(reduction='none')  # Binary Cross Entropy
         self.hyp = h
         self.stride = m.stride  # model strides
         self.nc = m.nc  # number of classes
@@ -134,6 +145,7 @@ class v8DetectionLoss:
         self.assigner = TaskAlignedAssigner(topk=10, num_classes=self.nc, alpha=0.5, beta=6.0)
         self.bbox_loss = BboxLoss(m.reg_max - 1, use_dfl=self.use_dfl).to(device)
         self.proj = torch.arange(m.reg_max, dtype=torch.float, device=device)
+        pass
 
     def preprocess(self, targets, batch_size, scale_tensor):
         """Preprocesses the target counts and matches with the input batch size to output a tensor."""
@@ -162,11 +174,18 @@ class v8DetectionLoss:
         return dist2bbox(pred_dist, anchor_points, xywh=False)
 
     def __call__(self, preds, batch):
-        """Calculate the sum of the loss for box, cls and dfl multiplied by batch size."""
+        """
+        Calculate the sum of the loss for box, cls and dfl multiplied by batch size.
+        """
+        preds: List
+        batch: Dict
+
         loss = torch.zeros(3, device=self.device)  # box, cls, dfl
         feats = preds[1] if isinstance(preds, tuple) else preds
-        pred_distri, pred_scores = torch.cat([xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
-            (self.reg_max * 4, self.nc), 1)
+        pred_distri, pred_scores = torch.cat(
+            [xi.view(feats[0].shape[0], self.no, -1) for xi in feats], 2).split(
+            (self.reg_max * 4, self.nc), 1
+        )
 
         pred_scores = pred_scores.permute(0, 2, 1).contiguous()
         pred_distri = pred_distri.permute(0, 2, 1).contiguous()
@@ -186,8 +205,17 @@ class v8DetectionLoss:
         pred_bboxes = self.bbox_decode(anchor_points, pred_distri)  # xyxy, (b, h*w, 4)
 
         _, target_bboxes, target_scores, fg_mask, _ = self.assigner(
-            pred_scores.detach().sigmoid(), (pred_bboxes.detach() * stride_tensor).type(gt_bboxes.dtype),
-            anchor_points * stride_tensor, gt_labels, gt_bboxes, mask_gt)
+            pred_scores.detach().sigmoid(),
+            (pred_bboxes.detach() * stride_tensor).type(gt_bboxes.dtype),
+            anchor_points * stride_tensor,
+            gt_labels,
+            gt_bboxes,
+            mask_gt
+        )
+
+        '''
+        target_bboxes (Tensor): shape(bs, num_total_anchors, 4)
+        '''
 
         target_scores_sum = max(target_scores.sum(), 1)
 
@@ -198,12 +226,22 @@ class v8DetectionLoss:
         # Bbox loss
         if fg_mask.sum():
             target_bboxes /= stride_tensor
-            loss[0], loss[2] = self.bbox_loss(pred_distri, pred_bboxes, anchor_points, target_bboxes, target_scores,
-                                              target_scores_sum, fg_mask)
+            loss[0], loss[2] = self.bbox_loss(
+                pred_distri,
+                pred_bboxes,
+                anchor_points,
+                target_bboxes,
+                target_scores,
+                target_scores_sum,
+                fg_mask,
+            )
 
         loss[0] *= self.hyp.box  # box gain
         loss[1] *= self.hyp.cls  # cls gain
         loss[2] *= self.hyp.dfl  # dfl gain
+
+        print('pred type:', type(preds))
+        print('batch type:', type(batch))
 
         return loss.sum() * batch_size, loss.detach()  # loss(box, cls, dfl)
 
@@ -308,16 +346,16 @@ class v8SegmentationLoss(v8DetectionLoss):
         return (crop_mask(loss, xyxy).mean(dim=(1, 2)) / area).sum()
 
     def calculate_segmentation_loss(
-        self,
-        fg_mask: torch.Tensor,
-        masks: torch.Tensor,
-        target_gt_idx: torch.Tensor,
-        target_bboxes: torch.Tensor,
-        batch_idx: torch.Tensor,
-        proto: torch.Tensor,
-        pred_masks: torch.Tensor,
-        imgsz: torch.Tensor,
-        overlap: bool,
+            self,
+            fg_mask: torch.Tensor,
+            masks: torch.Tensor,
+            target_gt_idx: torch.Tensor,
+            target_bboxes: torch.Tensor,
+            batch_idx: torch.Tensor,
+            proto: torch.Tensor,
+            pred_masks: torch.Tensor,
+            imgsz: torch.Tensor,
+            overlap: bool,
     ) -> torch.Tensor:
         """
         Calculate the loss for instance segmentation.
