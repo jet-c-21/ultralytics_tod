@@ -15,6 +15,13 @@ import multiprocessing as mp
 from pprint import pprint as pp
 from ultralytics import YOLO
 
+try:
+    import ultralytics
+    msg = f"Using Custom Ultralytics Version: {ultralytics.SUB_VERSION}"
+    print(msg)
+except:
+    pass
+
 # Load a model
 # model = YOLO('yolov8n.yaml')  # build a new model from YAML
 # model = YOLO('yolov8n.pt')  # load a pretrained model (recommended for training)

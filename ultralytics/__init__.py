@@ -19,6 +19,7 @@ __all__ = [
     'checks',
     'download',
     'settings',
+    'SUB_VERSION',
 ]
 
 SUB_VERSION = '0.0.1'
