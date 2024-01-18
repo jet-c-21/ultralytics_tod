@@ -766,8 +766,8 @@ def parse_model(d: Dict, ch: int, verbose=True):  # model_dict, input_channels(3
             ch = []
         ch.append(ch_out)
 
-    msg = f"layers:\n{layers}"
-    print(msg)
+    # msg = f"layers:\n{layers}"
+    # print(msg)
 
     return nn.Sequential(*layers), sorted(save)
 

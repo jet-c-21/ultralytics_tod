@@ -69,14 +69,24 @@ class BboxLoss(nn.Module):
         self.reg_max = reg_max
         self.use_dfl = use_dfl
 
-    def forward(self, pred_dist, pred_bboxes, anchor_points, target_bboxes, target_scores, target_scores_sum, fg_mask):
+    def forward(self,
+                pred_dist,
+                pred_bboxes,
+                anchor_points,
+                target_bboxes,
+                target_scores,
+                target_scores_sum,
+                fg_mask):
         """IoU loss."""
         weight = target_scores.sum(-1)[fg_mask].unsqueeze(-1)
         # print(f"weight: {weight}")
 
         iou = bbox_iou(pred_bboxes[fg_mask], target_bboxes[fg_mask], xywh=False, CIoU=True)
+        eps = 1e-7
         tgt_bbox_x1, tgt_bbox_y1, tgt_bbox_x2, tgt_bbox_y2 = target_bboxes[fg_mask].chunk(4, -1)
-        tgt_bbox_w, tgt_bbox_h = tgt_bbox_x2 - tgt_bbox_x1 + 1e-7, tgt_bbox_y2 - tgt_bbox_y1 + 1e-7
+
+        tgt_bbox_w = tgt_bbox_x2 - tgt_bbox_x1 + eps
+        tgt_bbox_h = tgt_bbox_y2 - tgt_bbox_y1 + eps
         tgt_bbox_area = tgt_bbox_w * tgt_bbox_h
         # print(weight * (1 / tgt_bbox_area))
 
