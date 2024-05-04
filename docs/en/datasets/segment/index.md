@@ -77,19 +77,28 @@ The `train` and `val` fields specify the paths to the directories containing the
         model = YOLO('yolov8n-seg.pt')  # load a pretrained model (recommended for training)
 
         # Train the model
-        results = model.train(data='coco128-seg.yaml', epochs=100, imgsz=640)
+        results = model.train(data='coco8-seg.yaml', epochs=100, imgsz=640)
         ```
     === "CLI"
 
         ```bash
         # Start training from a pretrained *.pt model
-        yolo detect train data=coco128-seg.yaml model=yolov8n-seg.pt epochs=100 imgsz=640
+        yolo detect train data=coco8-seg.yaml model=yolov8n-seg.pt epochs=100 imgsz=640
         ```
 
 ## Supported Datasets
 
-* [COCO](coco.md): A large-scale dataset designed for object detection, segmentation, and captioning tasks with over 200K labeled images.
-* [COCO8-seg](coco8-seg.md): A smaller dataset for instance segmentation tasks, containing a subset of 8 COCO images with segmentation annotations.
+## Supported Datasets
+
+- [COCO](coco.md): A comprehensive dataset for object detection, segmentation, and captioning, featuring over 200K labeled images across a wide range of categories.
+
+- [COCO8-seg](coco8-seg.md): A compact, 8-image subset of COCO designed for quick testing of segmentation model training, ideal for CI checks and workflow validation in the `ultralytics` repository.
+
+- [Carparts-seg](carparts-seg.md): A specialized dataset focused on the segmentation of car parts, ideal for automotive applications. It includes a variety of vehicles with detailed annotations of individual car components.
+
+- [Crack-seg](crack-seg.md): A dataset tailored for the segmentation of cracks in various surfaces. Essential for infrastructure maintenance and quality control, it provides detailed imagery for training models to identify structural weaknesses.
+
+- [Package-seg](package-seg.md): A dataset dedicated to the segmentation of different types of packaging materials and shapes. It's particularly useful for logistics and warehouse automation, aiding in the development of systems for package handling and sorting.
 
 ### Adding your own dataset
 

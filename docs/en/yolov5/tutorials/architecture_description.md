@@ -38,12 +38,14 @@ import torch.nn as nn
 
 class SPP(nn.Module):
     def __init__(self):
+        """Initializes an SPP module with three different sizes of max pooling layers."""
         super().__init__()
         self.maxpool1 = nn.MaxPool2d(5, 1, padding=2)
         self.maxpool2 = nn.MaxPool2d(9, 1, padding=4)
         self.maxpool3 = nn.MaxPool2d(13, 1, padding=6)
 
     def forward(self, x):
+        """Applies three max pooling layers on input `x` and concatenates results along channel dimension."""
         o1 = self.maxpool1(x)
         o2 = self.maxpool2(x)
         o3 = self.maxpool3(x)
@@ -52,10 +54,12 @@ class SPP(nn.Module):
 
 class SPPF(nn.Module):
     def __init__(self):
+        """Initializes an SPPF module with a specific configuration of MaxPool2d layer."""
         super().__init__()
         self.maxpool = nn.MaxPool2d(5, 1, padding=2)
 
     def forward(self, x):
+        """Applies sequential max pooling and concatenates results with input tensor; expects input tensor x of any shape."""
         o1 = self.maxpool(x)
         o2 = self.maxpool(o1)
         o3 = self.maxpool(o2)
@@ -63,6 +67,7 @@ class SPPF(nn.Module):
 
 
 def main():
+    """Compares outputs and performance of SPP and SPPF on a random tensor (8, 32, 16, 16)."""
     input_tensor = torch.rand(8, 32, 16, 16)
     spp = SPP()
     sppf = SPPF()
@@ -117,6 +122,7 @@ YOLOv5 employs various data augmentation techniques to improve the model's abili
   ![mixup](https://user-images.githubusercontent.com/31005897/159109361-3b24333b-f481-478b-ae00-df7838f0b5cd.png)
 
 - **Albumentations**: A powerful library for image augmenting that supports a wide variety of augmentation techniques.
+
 - **HSV Augmentation**: Random changes to the Hue, Saturation, and Value of the images.
 
   ![hsv](https://user-images.githubusercontent.com/31005897/159109407-83d100ba-1aba-4f4b-aa03-4f048f815981.png)
@@ -160,8 +166,8 @@ The objectness losses of the three prediction layers (`P3`, `P4`, `P5`) are weig
 
 The YOLOv5 architecture makes some important changes to the box prediction strategy compared to earlier versions of YOLO. In YOLOv2 and YOLOv3, the box coordinates were directly predicted using the activation of the last layer.
 
-![b_x](https://latex.codecogs.com/svg.image?b_x=\sigma(t_x)+c_x)
-![b_y](https://latex.codecogs.com/svg.image?b_y=\sigma(t_y)+c_y)
+![b_x](<https://latex.codecogs.com/svg.image?b_x=\sigma(t_x)+c_x>)
+![b_y](<https://latex.codecogs.com/svg.image?b_y=\sigma(t_y)+c_y>)
 ![b_w](https://latex.codecogs.com/svg.image?b_w=p_w\cdot&space;e^{t_w})
 ![b_h](https://latex.codecogs.com/svg.image?b_h=p_h\cdot&space;e^{t_h})
 
@@ -171,10 +177,10 @@ However, in YOLOv5, the formula for predicting the box coordinates has been upda
 
 The revised formulas for calculating the predicted bounding box are as follows:
 
-![bx](https://latex.codecogs.com/svg.image?b_x=(2\cdot\sigma(t_x)-0.5)+c_x)
-![by](https://latex.codecogs.com/svg.image?b_y=(2\cdot\sigma(t_y)-0.5)+c_y)
-![bw](https://latex.codecogs.com/svg.image?b_w=p_w\cdot(2\cdot\sigma(t_w))^2)
-![bh](https://latex.codecogs.com/svg.image?b_h=p_h\cdot(2\cdot\sigma(t_h))^2)
+![bx](<https://latex.codecogs.com/svg.image?b_x=(2\cdot\sigma(t_x)-0.5)+c_x>)
+![by](<https://latex.codecogs.com/svg.image?b_y=(2\cdot\sigma(t_y)-0.5)+c_y>)
+![bw](<https://latex.codecogs.com/svg.image?b_w=p_w\cdot(2\cdot\sigma(t_w))^2>)
+![bh](<https://latex.codecogs.com/svg.image?b_h=p_h\cdot(2\cdot\sigma(t_h))^2>)
 
 Compare the center point offset before and after scaling. The center point offset range is adjusted from (0, 1) to (-0.5, 1.5). Therefore, offset can easily get 0 or 1.
 
@@ -196,11 +202,11 @@ This process follows these steps:
 
 ![rh](https://latex.codecogs.com/svg.image?r_h=h_{gt}/h_{at})
 
-![rwmax](https://latex.codecogs.com/svg.image?r_w^{max}=max(r_w,1/r_w))
+![rwmax](<https://latex.codecogs.com/svg.image?r_w^{max}=max(r_w,1/r_w)>)
 
-![rhmax](https://latex.codecogs.com/svg.image?r_h^{max}=max(r_h,1/r_h))
+![rhmax](<https://latex.codecogs.com/svg.image?r_h^{max}=max(r_h,1/r_h)>)
 
-![rmax](https://latex.codecogs.com/svg.image?r^{max}=max(r_w^{max},r_h^{max}))
+![rmax](<https://latex.codecogs.com/svg.image?r^{max}=max(r_w^{max},r_h^{max})>)
 
 ![match](https://latex.codecogs.com/svg.image?r^{max}<{\rm&space;anchor_t})
 

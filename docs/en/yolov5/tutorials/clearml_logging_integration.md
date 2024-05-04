@@ -10,7 +10,7 @@ keywords: ClearML, YOLOv5, Ultralytics, AI toolbox, training data, remote traini
 
 ## About ClearML
 
-[ClearML](https://cutt.ly/yolov5-tutorial-clearml) is an [open-source](https://github.com/allegroai/clearml) toolbox designed to save you time ⏱️.
+[ClearML](https://clear.ml/) is an [open-source](https://github.com/allegroai/clearml) toolbox designed to save you time ⏱️.
 
 🔨 Track every YOLOv5 training run in the <b>experiment manager</b>
 
@@ -36,19 +36,19 @@ And so much more. It's up to you how many of these tools you want to use, you ca
 
 To keep track of your experiments and/or data, ClearML needs to communicate to a server. You have 2 options to get one:
 
-Either sign up for free to the [ClearML Hosted Service](https://cutt.ly/yolov5-tutorial-clearml) or you can set up your own server, see [here](https://clear.ml/docs/latest/docs/deploying_clearml/clearml_server). Even the server is open-source, so even if you're dealing with sensitive data, you should be good to go!
+Either sign up for free to the [ClearML Hosted Service](https://clear.ml/) or you can set up your own server, see [here](https://clear.ml/docs/latest/docs/deploying_clearml/clearml_server). Even the server is open-source, so even if you're dealing with sensitive data, you should be good to go!
 
 - Install the `clearml` python package:
 
-   ```bash
-   pip install clearml
-   ```
+    ```bash
+    pip install clearml
+    ```
 
 - Connect the ClearML SDK to the server by [creating credentials](https://app.clear.ml/settings/workspace-configuration) (go right top to Settings -> Workspace -> Create new credentials), then execute the command below and follow the instructions:
 
-   ```bash
-   clearml-init
-   ```
+    ```bash
+    clearml-init
+    ```
 
 That's it! You're done 😎
 
@@ -67,13 +67,13 @@ This will enable integration with the YOLOv5 training script. Every training run
 If you want to change the `project_name` or `task_name`, use the `--project` and `--name` arguments of the `train.py` script, by default the project will be called `YOLOv5` and the task `Training`. PLEASE NOTE: ClearML uses `/` as a delimiter for subprojects, so be careful when using `/` in your project name!
 
 ```bash
-python train.py --img 640 --batch 16 --epochs 3 --data coco128.yaml --weights yolov5s.pt --cache
+python train.py --img 640 --batch 16 --epochs 3 --data coco8.yaml --weights yolov5s.pt --cache
 ```
 
 or with custom project and task name:
 
 ```bash
-python train.py --project my_project --name my_training --img 640 --batch 16 --epochs 3 --data coco128.yaml --weights yolov5s.pt --cache
+python train.py --project my_project --name my_training --img 640 --batch 16 --epochs 3 --data coco8.yaml --weights yolov5s.pt --cache
 ```
 
 This will capture:

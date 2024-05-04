@@ -21,7 +21,7 @@ The output from Ultralytics trackers is consistent with standard object detectio
 
 <p align="center">
   <br>
-  <iframe width="720" height="405" src="https://www.youtube.com/embed/hHyHmOtmEgs?si=VNZtXmm45Nb9s-N-"
+  <iframe loading="lazy" width="720" height="405" src="https://www.youtube.com/embed/hHyHmOtmEgs?si=VNZtXmm45Nb9s-N-"
     title="YouTube video player" frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowfullscreen>
@@ -49,12 +49,16 @@ Ultralytics YOLO extends its object detection features to provide robust and ver
 
 Ultralytics YOLO supports the following tracking algorithms. They can be enabled by passing the relevant YAML configuration file such as `tracker=tracker_type.yaml`:
 
-* [BoT-SORT](https://github.com/NirAharon/BoT-SORT) - Use `botsort.yaml` to enable this tracker.
-* [ByteTrack](https://github.com/ifzhang/ByteTrack) - Use `bytetrack.yaml` to enable this tracker.
+- [BoT-SORT](https://github.com/NirAharon/BoT-SORT) - Use `botsort.yaml` to enable this tracker.
+- [ByteTrack](https://github.com/ifzhang/ByteTrack) - Use `bytetrack.yaml` to enable this tracker.
 
 The default tracker is BoT-SORT.
 
 ## Tracking
+
+!!! Warning "Tracker Threshold Information"
+    
+    If object confidence score will be low, i.e lower than [`track_high_thresh`](https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/trackers/bytetrack.yaml#L5), then there will be no tracks successfully returned and updated.
 
 To run the tracker on video streams, use a trained Detect, Segment or Pose model such as YOLOv8n, YOLOv8n-seg and YOLOv8n-pose.
 
@@ -92,6 +96,10 @@ To run the tracker on video streams, use a trained Detect, Segment or Pose model
 As can be seen in the above usage, tracking is available for all Detect, Segment and Pose models run on videos or streaming sources.
 
 ## Configuration
+
+!!! Warning "Tracker Threshold Information"
+    
+    If object confidence score will be low, i.e lower than [`track_high_thresh`](https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/trackers/bytetrack.yaml#L5), then there will be no tracks successfully returned and updated.
 
 ### Tracking Arguments
 
@@ -353,8 +361,8 @@ To initiate your contribution, please refer to our [Contributing Guide](https://
 
 Together, let's enhance the tracking capabilities of the Ultralytics YOLO ecosystem 🙏!
 
+[fish track]: https://github.com/RizwanMunawar/ultralytics/assets/62513924/a5146d0f-bfa8-4e0a-b7df-3c1446cd8142
+
+[people track]: https://github.com/RizwanMunawar/ultralytics/assets/62513924/93bb4ee2-77a0-4e4e-8eb6-eb8f527f0527
+
 [vehicle track]: https://github.com/RizwanMunawar/ultralytics/assets/62513924/ee6e6038-383b-4f21-ac29-b2a1c7d386ab
-
-[people track]:  https://github.com/RizwanMunawar/ultralytics/assets/62513924/93bb4ee2-77a0-4e4e-8eb6-eb8f527f0527
-
-[fish track]:    https://github.com/RizwanMunawar/ultralytics/assets/62513924/a5146d0f-bfa8-4e0a-b7df-3c1446cd8142

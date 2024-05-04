@@ -10,7 +10,7 @@ Ultralytics provides various installation methods including pip, conda, and Dock
 
 <p align="center">
   <br>
-  <iframe width="720" height="405" src="https://www.youtube.com/embed/_a7cVL9hqnk"
+  <iframe loading="lazy" width="720" height="405" src="https://www.youtube.com/embed/_a7cVL9hqnk"
     title="YouTube video player" frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowfullscreen>
@@ -22,6 +22,7 @@ Ultralytics provides various installation methods including pip, conda, and Dock
 !!! Example "Install"
 
     === "Pip install (recommended)"
+
         Install the `ultralytics` package using pip, or update an existing installation by running `pip install -U ultralytics`. Visit the Python Package Index (PyPI) for more details on the `ultralytics` package: [https://pypi.org/project/ultralytics/](https://pypi.org/project/ultralytics/).
 
         [![PyPI version](https://badge.fury.io/py/ultralytics.svg)](https://badge.fury.io/py/ultralytics) [![Downloads](https://static.pepy.tech/badge/ultralytics)](https://pepy.tech/project/ultralytics)
@@ -38,8 +39,8 @@ Ultralytics provides various installation methods including pip, conda, and Dock
         pip install git+https://github.com/ultralytics/ultralytics.git@main
         ```
 
-
     === "Conda install"
+
         Conda is an alternative package manager to pip which may also be used for installation. Visit Anaconda for more details at [https://anaconda.org/conda-forge/ultralytics](https://anaconda.org/conda-forge/ultralytics). Ultralytics feedstock repository for updating the conda package is at [https://github.com/conda-forge/ultralytics-feedstock/](https://github.com/conda-forge/ultralytics-feedstock/).
 
 
@@ -127,7 +128,7 @@ Ultralytics provides various installation methods including pip, conda, and Dock
 
         For advanced Docker usage, feel free to explore the [Ultralytics Docker Guide](https://docs.ultralytics.com/guides/docker-quickstart/).
 
-See the `ultralytics` [requirements.txt](https://github.com/ultralytics/ultralytics/blob/main/requirements.txt) file for a list of dependencies. Note that all examples above install all required dependencies.
+See the `ultralytics` [requirements.txt](https://github.com/ultralytics/ultralytics/blob/main/pyproject.toml) file for a list of dependencies. Note that all examples above install all required dependencies.
 
 !!! Tip "Tip"
 
@@ -160,7 +161,7 @@ The Ultralytics command line interface (CLI) allows for simple single-line comma
 
         Train a detection model for 10 epochs with an initial learning_rate of 0.01
         ```bash
-        yolo train data=coco128.yaml model=yolov8n.pt epochs=10 lr0=0.01
+        yolo train data=coco8.yaml model=yolov8n.pt epochs=10 lr0=0.01
         ```
 
     === "Predict"
@@ -174,7 +175,7 @@ The Ultralytics command line interface (CLI) allows for simple single-line comma
 
         Val a pretrained detection model at batch-size 1 and image size 640:
         ```bash
-        yolo val model=yolov8n.pt data=coco128.yaml batch=1 imgsz=640
+        yolo val model=yolov8n.pt data=coco8.yaml batch=1 imgsz=640
         ```
 
     === "Export"
@@ -224,8 +225,8 @@ For example, users can load a model, train it, evaluate its performance on a val
     # Load a pretrained YOLO model (recommended for training)
     model = YOLO('yolov8n.pt')
 
-    # Train the model using the 'coco128.yaml' dataset for 3 epochs
-    results = model.train(data='coco128.yaml', epochs=3)
+    # Train the model using the 'coco8.yaml' dataset for 3 epochs
+    results = model.train(data='coco8.yaml', epochs=3)
 
     # Evaluate the model's performance on the validation set
     results = model.val()
