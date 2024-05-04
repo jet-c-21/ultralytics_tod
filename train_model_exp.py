@@ -9,14 +9,17 @@ https://github.com/ultralytics/ultralytics/issues/981
 test on 2023-12-24
 
 """
+
 import datetime
 import math
 import multiprocessing as mp
 from pprint import pprint as pp
+
 from ultralytics import YOLO
 
 try:
     import ultralytics
+
     msg = f"Using Custom Ultralytics Version: {ultralytics.SUB_VERSION}"
     print(msg)
 except:
@@ -34,18 +37,18 @@ except:
 # model = YOLO('yolov8x.pt', task='detect')
 
 # model_yaml_name = 'yolov8n-gplNano.yaml'
-model_yaml_path = 'yolov8n.yaml'
+model_yaml_path = "yolov8n.yaml"
 
 # model = YOLO(gpl_open_src_pt_path, task='detect')
 # model = YOLO('yolov8n-p6.yaml', task='detect').load(gpl_open_src_pt_path)
 # model = YOLO(str(model_yaml_path), task='detect').load(gpl_open_src_pt_path)
-model = YOLO(str(model_yaml_path), task='detect')  # train a brand-new model
+model = YOLO(str(model_yaml_path), task="detect")  # train a brand-new model
 
-data_yaml = 'B003-1_DC-3_SEED-369.yaml'
+data_yaml = "B003-1_DC-3_SEED-369.yaml"
 # data_yaml_name = 'E001-1_DC-69_SEED-369_2023-12-20-18-24-23.yaml'
 
-if __name__ == '__main__':
-    training_task = 'GPL Nano Model Training'
+if __name__ == "__main__":
+    training_task = "GPL Nano Model Training"
     print(model.info(detailed=True))
 
     st = datetime.datetime.now()
@@ -63,7 +66,7 @@ if __name__ == '__main__':
         lr0=1e-3,
         # batch=16,
         # lr0=(1e-3) * math.sqrt(0.5),
-        optimizer='auto',
+        optimizer="auto",
         rect=True,
         plots=True,
         hsv_h=0.015,

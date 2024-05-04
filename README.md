@@ -58,6 +58,7 @@ Pip install the ultralytics package including all [requirements](https://github.
 ```shell
 pip install git+https://github.com/jet-c-21/ultralytics_tod.git
 ```
+
 ```bash
 pip install ultralytics
 ```

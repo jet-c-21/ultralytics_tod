@@ -4,6 +4,7 @@ Author: Jet C.
 GitHub: https://github.com/jet-c-21
 Create Date: 12/26/23
 """
+
 import pathlib
 import sys
 
@@ -20,20 +21,22 @@ import ultralytics
 print(f"ultralytics ver : {ultralytics.__version__}")
 
 from copy import deepcopy
+
 import torch
+
 from ultralytics import YOLO
 from ultralytics.nn.modules import (
     Detect,
-    Segment,
     Pose,
+    Segment,
 )
 from ultralytics.nn.tasks import (
     BaseModel,
-    yaml_model_load,
-    parse_model,
     initialize_weights,
+    parse_model,
     scale_img,
     v8DetectionLoss,
+    yaml_model_load,
 )
 from ultralytics.utils import (
     LOGGER,
@@ -41,25 +44,25 @@ from ultralytics.utils import (
 
 
 def view_yolo():
-    model = YOLO(str(yaml_path), task='detect')
+    model = YOLO(str(yaml_path), task="detect")
 
 
 class TinyObjectDetectionModel(BaseModel):
     """YOLOv8 detection model."""
 
-    def __init__(self, cfg='yolov8n.yaml', ch=3, nc=None, verbose=True):  # model, input channels, number of classes
+    def __init__(self, cfg="yolov8n.yaml", ch=3, nc=None, verbose=True):  # model, input channels, number of classes
         """Initialize the YOLOv8 detection model with the given config and parameters."""
         super().__init__()
         self.yaml = cfg if isinstance(cfg, dict) else yaml_model_load(cfg)  # cfg dict
 
         # Define model
-        ch = self.yaml['ch'] = self.yaml.get('ch', ch)  # input channels
-        if nc and nc != self.yaml['nc']:
+        ch = self.yaml["ch"] = self.yaml.get("ch", ch)  # input channels
+        if nc and nc != self.yaml["nc"]:
             LOGGER.info(f"Overriding model.yaml nc={self.yaml['nc']} with nc={nc}")
-            self.yaml['nc'] = nc  # override YAML value
+            self.yaml["nc"] = nc  # override YAML value
         self.model, self.save = parse_model(deepcopy(self.yaml), ch=ch, verbose=verbose)  # model, savelist
-        self.names = {i: f'{i}' for i in range(self.yaml['nc'])}  # default names dict
-        self.inplace = self.yaml.get('inplace', True)
+        self.names = {i: f"{i}" for i in range(self.yaml["nc"])}  # default names dict
+        self.inplace = self.yaml.get("inplace", True)
 
         # Build strides
         m = self.model[-1]  # Detect()
@@ -77,7 +80,7 @@ class TinyObjectDetectionModel(BaseModel):
         initialize_weights(self)
         if verbose:
             self.info()
-            LOGGER.info('')
+            LOGGER.info("")
 
     def _predict_augment(self, x):
         """Perform augmentations on input image x and return augmented inference and train outputs."""
@@ -107,9 +110,9 @@ class TinyObjectDetectionModel(BaseModel):
     def _clip_augmented(self, y):
         """Clip YOLO augmented inference tails."""
         nl = self.model[-1].nl  # number of detection layers (P3-P5)
-        g = sum(4 ** x for x in range(nl))  # grid points
+        g = sum(4**x for x in range(nl))  # grid points
         e = 1  # exclude layer count
-        i = (y[0].shape[-1] // g) * sum(4 ** x for x in range(e))  # indices
+        i = (y[0].shape[-1] // g) * sum(4**x for x in range(e))  # indices
         y[0] = y[0][..., :-i]  # large
         i = (y[-1].shape[-1] // g) * sum(4 ** (nl - 1 - x) for x in range(e))  # indices
         y[-1] = y[-1][..., i:]  # small
@@ -120,12 +123,12 @@ class TinyObjectDetectionModel(BaseModel):
         return v8DetectionLoss(self)
 
 
-if __name__ == '__main__':
-    MODEL_YAMLS_DIR = ULYTCS_TOD_DIR / 'model_yamls'
+if __name__ == "__main__":
+    MODEL_YAMLS_DIR = ULYTCS_TOD_DIR / "model_yamls"
     # yaml_name = 'yolov8n-gplTest.yaml'
     # yaml_name = 'yolov8-so.yaml'
     # yaml_name = 'yolov8n-official.yaml'
-    yaml_name = 'yolov8-so1.yaml'
+    yaml_name = "yolov8-so1.yaml"
     yaml_path = MODEL_YAMLS_DIR / yaml_name
     print(yaml_path)
 

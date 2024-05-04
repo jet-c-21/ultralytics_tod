@@ -26,4 +26,4 @@ __all__ = (
     "Explorer",
 )
 
-SUB_VERSION = '1.0.0'
+SUB_VERSION = "1.0.0"
