@@ -82,6 +82,7 @@ class BboxLoss(nn.Module):
         # print(f"weight: {weight}")
 
         iou = bbox_iou(pred_bboxes[fg_mask], target_bboxes[fg_mask], xywh=False, CIoU=True)
+        # >>>>>>>>>>>>>>>>>> loss modification >>>>>>>>>>>>>>>>>>
         eps = 1e-7
         tgt_bbox_x1, tgt_bbox_y1, tgt_bbox_x2, tgt_bbox_y2 = target_bboxes[fg_mask].chunk(4, -1)
 
@@ -94,6 +95,7 @@ class BboxLoss(nn.Module):
         loss_iou = ((1.0 - iou) * weight * (1 / tgt_bbox_area)).sum() / target_scores_sum
         # print(f"loss_iou: {loss_iou}")
         # print(f"old_loss_iou: {loss_iou}, new_iou: {new_iou}, factor: {(1 / tgt_bbox_area)}")
+        # <<<<<<<<<<<<<<<<<< loss modification <<<<<<<<<<<<<<<<<<
 
         # DFL loss
         if self.use_dfl:

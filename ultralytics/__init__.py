@@ -22,4 +22,4 @@ __all__ = [
     'SUB_VERSION',
 ]
 
-SUB_VERSION = '0.0.1'
+SUB_VERSION = '1.0.0'
