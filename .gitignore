@@ -3,6 +3,7 @@
 # ** Folders
 .history/
 thirdparty_packages/
+train-datasets/
 
 # ** Files
 *.history
