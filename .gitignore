@@ -2,6 +2,7 @@
 
 # ** Folders
 .history/
+thirdparty_packages/
 
 # ** Files
 *.history
