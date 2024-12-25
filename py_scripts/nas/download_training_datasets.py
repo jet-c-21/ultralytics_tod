@@ -33,6 +33,8 @@ def main():
         specific_ds_name=f"{location_id}_sampled",
     )
 
+    aibr_dd.pull_data_and_build_training_ds()
+
 
 
 if __name__ == '__main__':
