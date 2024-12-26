@@ -25,10 +25,14 @@ def main():
     # print(aibr_ftp_tool)
 
     location_id = "USA-KY001-1"
+
+    add_bg_images = False
+
     vd_nas = get_vital_data_nas_client()
     aibr_dd = AIBRDeviceData(location_id=location_id, nas=vd_nas)
     aibr_dd.pull_data_and_build_training_ds(
-        data_count=100,
+        data_count=200,
+        add_bg_images=add_bg_images,
         specific_ds_name=f"{location_id}_sampled",
     )
 
