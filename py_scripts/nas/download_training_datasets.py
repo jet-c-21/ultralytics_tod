@@ -19,6 +19,7 @@ print(f"[*INFO*] - append directory to path: {PROJECT_DIR}")
 from third_party_packages.ichase_utils.ftp import get_vital_data_nas_client
 from third_party_packages.ichase_utils.ichase_data.aibr import AIBRDeviceData
 
+
 def main():
     # aibr_ftp_tool = AIBRFTPTool(log_path=None)
     # print(aibr_ftp_tool)
