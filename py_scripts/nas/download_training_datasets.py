@@ -15,11 +15,9 @@ sys.path.append(str(PROJECT_DIR))
 print(f"[*INFO*] - append directory to path: {PROJECT_DIR}")
 # <<< Dynamic Changing `sys.path` in Runtime by Adding Project Directory to Path <<<
 
-from thirdparty_packages.ichase_utils import var as VAR
 
-from thirdparty_packages.ichase_utils.ftp import get_vital_data_nas_client
-from thirdparty_packages.ichase_utils.ftp.aibr import AIBRFTPTool
-from thirdparty_packages.ichase_utils.ichase_data.aibr import AIBRDeviceData
+from third_party_packages.ichase_utils.ftp import get_vital_data_nas_client
+from third_party_packages.ichase_utils.ichase_data.aibr import AIBRDeviceData
 
 def main():
     # aibr_ftp_tool = AIBRFTPTool(log_path=None)
@@ -32,9 +30,6 @@ def main():
         data_count=100,
         specific_ds_name=f"{location_id}_sampled",
     )
-
-    aibr_dd.pull_data_and_build_training_ds()
-
 
 
 if __name__ == '__main__':

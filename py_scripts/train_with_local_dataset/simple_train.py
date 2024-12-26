@@ -15,22 +15,21 @@ sys.path.append(str(PROJECT_DIR))
 print(f"[*INFO*] - append directory to path: {PROJECT_DIR}")
 # <<< Dynamic Changing `sys.path` in Runtime by Adding Project Directory to Path <<<
 
+import torch
+import ultralytics
+from ultralytics import YOLO
 
-from third_party_packages.ichase_utils.ftp import get_vital_data_nas_client
-from third_party_packages.ichase_utils.ichase_data.aibr import AIBRDeviceData
+print(f"[*INFO*] - GPU available: {torch.cuda.is_available()}")
+print(f"[*INFO*] - imported ultralytics path: {ultralytics.__file__}")
+print(f"[*INFO*] - imported ultralytics version: {ultralytics.__version__}")
+
+
 
 def main():
-    # aibr_ftp_tool = AIBRFTPTool(log_path=None)
-    # print(aibr_ftp_tool)
+    ds_yaml = PROJECT_DIR / "USA-KY001-1_sampled.yaml"
+    assert ds_yaml.is_file(), f"Dataset file not found: {ds_yaml}"
 
-    location_id = "USA-KY001-1"
-    vd_nas = get_vital_data_nas_client()
-    aibr_dd = AIBRDeviceData(location_id=location_id, nas=vd_nas)
-    aibr_dd.pull_data_and_build_training_ds(
-        data_count=100,
-        specific_ds_name=f"{location_id}_sampled",
-    )
-
+    model = YOLO("yolov8.yaml")
 
 if __name__ == '__main__':
     main()
