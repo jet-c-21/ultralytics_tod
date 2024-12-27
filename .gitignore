@@ -4,6 +4,7 @@
 .history/
 third_party_packages/
 train-datasets/
+python_playground/
 
 # ** Files
 *.history
