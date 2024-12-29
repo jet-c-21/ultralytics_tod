@@ -30,5 +30,5 @@ __all__ = (
     "Explorer",
 )
 
-FORKED_VERSION = "0.0.0"
+FORKED_VERSION = "0.0.1"
 FORKED_VERSION_FULL = f"jet-c-21_{FORKED_VERSION}"
