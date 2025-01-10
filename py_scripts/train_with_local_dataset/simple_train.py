@@ -51,6 +51,7 @@ def main():
         lr0=lr0,
         batch=batch,
         seed=random_state,
+        verbose=True,
     )
 
 
