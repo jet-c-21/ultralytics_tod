@@ -18,6 +18,7 @@ print(f"[*INFO*] - append directory to path: {PROJECT_DIR}")
 
 from third_party_packages.ichase_utils.ftp import get_vital_data_nas_client
 from third_party_packages.ichase_utils.ichase_data.aibr import AIBRDeviceData
+from third_party_packages.ichase_utils.dataset_tool import YOLODataset
 
 
 def main():
@@ -30,11 +31,17 @@ def main():
 
     vd_nas = get_vital_data_nas_client()
     aibr_dd = AIBRDeviceData(location_id=location_id, nas=vd_nas)
-    aibr_dd.pull_data_and_build_training_ds(
+    ds_dir, ds_yaml_path = aibr_dd.pull_data_and_build_training_ds(
         data_count=200,
+        random_state=369,
         add_bg_images=add_bg_images,
         specific_ds_name=f"{location_id}_sampled",
     )
+
+    yolo_ds = YOLODataset(ds_dir)
+    print(f"[*INFO*] - {ds_dir.name} yolo dataset info:\n{yolo_ds.info_df}\n")
+    print(f"[*INFO*] - all_image_paths_val_hash: {yolo_ds.get_all_image_paths_val_hash()}")
+    print(f"[*INFO*] - all_label_paths_val_hash: {yolo_ds.get_all_label_paths_val_hash()}\n")
 
 
 if __name__ == '__main__':

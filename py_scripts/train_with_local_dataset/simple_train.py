@@ -26,8 +26,6 @@ from ultralytics.utils.loss import v8DetectionLoss
 from ultralytics import YOLO
 
 from third_party_packages.ichase_utils.dataset_tool import YOLODataset
-from third_party_packages.ichase_utils.general import data_to_json_str
-from third_party_packages.ichase_utils.hash import get_list_val_md5
 
 basic_environment_check()
 
