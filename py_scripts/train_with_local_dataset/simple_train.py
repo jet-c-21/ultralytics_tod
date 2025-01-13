@@ -23,6 +23,12 @@ print(f"[*INFO*] - GPU available: {torch.cuda.is_available()}")
 print(f"[*INFO*] - imported ultralytics path: {ultralytics.__file__}")
 print(f"[*INFO*] - imported ultralytics version: {ultralytics.__version__}")
 
+from ultralytics.customization.engine.validator import base_validator_call
+from ultralytics.models.yolo.detect.val import DetectionValidator
+
+DetectionValidator._original_call = DetectionValidator.__call__
+DetectionValidator.__call__ = base_validator_call
+
 from ultralytics import YOLO
 
 from third_party_packages.ichase_utils.dataset_tool import YOLODataset
