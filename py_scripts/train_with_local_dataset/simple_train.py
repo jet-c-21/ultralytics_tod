@@ -19,8 +19,10 @@ print(f"[*INFO*] - append directory to path: {PROJECT_DIR}")
 from ultralytics.customization.utils.checks import basic_environment_check
 
 from ultralytics.customization.engine.validator import base_validator_call
+from ultralytics.customization.nn.tasks import detection_model_cal_loss_per_cls
 from ultralytics.customization.utils.loss import v8_detection_loss_cal_loss_per_cls
 
+from ultralytics.nn.tasks import DetectionModel
 from ultralytics.models.yolo.detect.val import DetectionValidator
 from ultralytics.utils.loss import v8DetectionLoss
 from ultralytics import YOLO
@@ -32,10 +34,11 @@ basic_environment_check()
 
 DetectionValidator._original_call = DetectionValidator.__call__
 DetectionValidator.__call__ = base_validator_call
+DetectionModel.cal_loss_per_cls = detection_model_cal_loss_per_cls
 v8DetectionLoss.cal_loss_per_cls = v8_detection_loss_cal_loss_per_cls
 
 
-def main():
+def main(verbose=True):
     ds_yaml = PROJECT_DIR / "USA-KY001-1_sampled.yaml"
     assert ds_yaml.is_file(), f"Dataset file not found: {ds_yaml}"
 
@@ -44,8 +47,9 @@ def main():
 
     yolo_ds = YOLODataset(ds_dir)
     print(f"[*INFO*] - {ds_dir.name} yolo dataset info:\n{yolo_ds.info_df}\n")
-    print(f"[*INFO*] - all_image_paths_val_hash: {yolo_ds.get_all_images_hash()}")
-    print(f"[*INFO*] - all_label_paths_val_hash: {yolo_ds.get_all_label_paths_val_hash()}\n")
+    if verbose:
+        print(f"[*INFO*] - all_image_paths_val_hash: {yolo_ds.get_all_images_hash()}")
+        print(f"[*INFO*] - all_label_paths_val_hash: {yolo_ds.get_all_label_paths_val_hash()}\n")
 
     epochs = 100
     batch = 8
@@ -65,4 +69,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(verbose=False)

@@ -1,5 +1,6 @@
 import json
-
+from typing import Dict, Tuple
+import numpy as np
 import torch
 
 from ultralytics.data.utils import check_cls_dataset, check_det_dataset
@@ -9,6 +10,115 @@ from ultralytics.utils import LOGGER, TQDM, callbacks, colorstr, emojis
 from ultralytics.utils.checks import check_imgsz
 from ultralytics.utils.ops import Profile
 from ultralytics.utils.torch_utils import de_parallel, select_device, smart_inference_mode
+
+
+def _batches_are_equal(batch1: Dict, batch2: Dict) -> bool:
+    """
+    this function is for debug
+
+    Check if two batches are equal, including nested structures, tensors, and arrays.
+
+    Args:
+        batch1 (Dict): The first batch dictionary to compare.
+        batch2 (Dict): The second batch dictionary to compare.
+
+    Returns:
+        bool: True if the batches are equal, False otherwise.
+    """
+    if batch1.keys() != batch2.keys():
+        return False
+
+    for key in batch1:
+        val1, val2 = batch1[key], batch2[key]
+
+        # Check if both are tensors
+        if isinstance(val1, torch.Tensor) and isinstance(val2, torch.Tensor):
+            if not torch.equal(val1, val2):
+                return False
+
+        # Check if both are NumPy arrays
+        elif isinstance(val1, np.ndarray) and isinstance(val2, np.ndarray):
+            if not np.array_equal(val1, val2):
+                return False
+
+        # Recursively check dictionaries
+        elif isinstance(val1, dict) and isinstance(val2, dict):
+            if not _batches_are_equal(val1, val2):
+                return False
+
+        # Check lists
+        elif isinstance(val1, list) and isinstance(val2, list):
+            if len(val1) != len(val2):
+                return False
+            if not all(_batches_are_equal({i: v1}, {i: v2}) for i, (v1, v2) in enumerate(zip(val1, val2))):
+                return False
+
+        # Check tuples
+        elif isinstance(val1, tuple) and isinstance(val2, tuple):
+            if len(val1) != len(val2):
+                return False
+            if not all(_batches_are_equal({i: v1}, {i: v2}) for i, (v1, v2) in enumerate(zip(val1, val2))):
+                return False
+
+        # Fallback to direct comparison for other types
+        else:
+            if val1 != val2:
+                return False
+
+    return True
+
+
+def _preds_are_equal(pred1: Tuple, pred2: Tuple) -> bool:
+    """
+    Check if two predictions are equal.
+
+    Args:
+        pred1 (Tuple): The first prediction tuple to compare.
+        pred2 (Tuple): The second prediction tuple to compare.
+
+    Returns:
+        bool: True if the predictions are equal, False otherwise.
+    """
+    if len(pred1) != len(pred2):
+        return False
+
+    for val1, val2 in zip(pred1, pred2):
+        # Check if both are tensors
+        if isinstance(val1, torch.Tensor) and isinstance(val2, torch.Tensor):
+            if not torch.equal(val1, val2):
+                return False
+
+        # Check if both are NumPy arrays
+        elif isinstance(val1, np.ndarray) and isinstance(val2, np.ndarray):
+            if not np.array_equal(val1, val2):
+                return False
+
+        # Recursively compare nested tuples
+        elif isinstance(val1, tuple) and isinstance(val2, tuple):
+            if not _preds_are_equal(val1, val2):
+                return False
+
+        # Check lists
+        elif isinstance(val1, list) and isinstance(val2, list):
+            if len(val1) != len(val2):
+                return False
+            if not all(_preds_are_equal((v1,), (v2,)) for v1, v2 in zip(val1, val2)):
+                return False
+
+        # Recursively compare dictionaries
+        elif isinstance(val1, dict) and isinstance(val2, dict):
+            if val1.keys() != val2.keys():
+                return False
+            for key in val1:
+                if not _preds_are_equal((val1[key],), (val2[key],)):
+                    return False
+
+        # Fallback to direct comparison for other types
+        else:
+            if val1 != val2:
+                return False
+
+    return True
 
 
 @smart_inference_mode()
@@ -81,6 +191,7 @@ def base_validator_call(self: BaseValidator, trainer=None, model=None):
     bar = TQDM(self.dataloader, desc=self.get_desc(), total=len(self.dataloader))
     self.init_metrics(de_parallel(model))
     self.jdict = []  # empty before each val
+    loss_per_cls = {}
     for batch_i, batch in enumerate(bar):
         self.run_callbacks("on_val_batch_start")
         self.batch_i = batch_i
@@ -95,10 +206,23 @@ def base_validator_call(self: BaseValidator, trainer=None, model=None):
         # Loss
         with dt[2]:
             if self.training:
+                # import copy
+                # orig_batch = copy.deepcopy(batch)
+                # orig_preds = copy.deepcopy(preds)
+
                 _detached_all_cls_loss = model.loss(batch, preds)[1]
-                print(f"[*DEBUG*] - _detached_all_cls_loss: {_detached_all_cls_loss}")
+                print(f"\n[*DEBUG*] - #{batch_i} _detached_all_cls_loss: {_detached_all_cls_loss}\n")
                 self.loss += _detached_all_cls_loss
-                pass
+
+                if not hasattr(model, "cal_loss_per_cls"):
+                    raise RuntimeError(
+                        f"function attr: cal_loss_per_cls should be assigned to {model.__class__.__name__} in runtime.")
+
+                # assert _batches_are_equal(batch, orig_batch)
+                # assert _preds_are_equal(preds, orig_preds)
+
+                # state 2 of batch and preds
+                model.cal_loss_per_cls(batch, preds, existed_result_dict=loss_per_cls)
 
         # Postprocess
         with dt[3]:

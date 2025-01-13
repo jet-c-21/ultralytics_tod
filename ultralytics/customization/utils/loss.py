@@ -13,8 +13,8 @@ from ultralytics.utils.tal import make_anchors
 
 
 def v8_detection_loss_cal_loss_per_cls(self: v8DetectionLoss,
+                                       preds,
                                        batch,
-                                       preds=None,
                                        existed_result_dict: Dict = None, ) -> Dict:
     """
     return:
