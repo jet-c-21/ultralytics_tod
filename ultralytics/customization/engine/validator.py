@@ -95,7 +95,9 @@ def base_validator_call(self: BaseValidator, trainer=None, model=None):
         # Loss
         with dt[2]:
             if self.training:
-                self.loss += model.loss(batch, preds)[1]
+                _detached_all_cls_loss = model.loss(batch, preds)[1]
+                print(f"[*DEBUG*] - _detached_all_cls_loss: {_detached_all_cls_loss}")
+                self.loss += _detached_all_cls_loss
                 pass
 
         # Postprocess

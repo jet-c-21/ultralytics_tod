@@ -15,23 +15,25 @@ sys.path.append(str(PROJECT_DIR))
 print(f"[*INFO*] - append directory to path: {PROJECT_DIR}")
 # <<< Dynamic Changing `sys.path` in Runtime by Adding Project Directory to Path <<<
 
-# basic environment check
-import torch
-import ultralytics
 
-print(f"[*INFO*] - GPU available: {torch.cuda.is_available()}")
-print(f"[*INFO*] - imported ultralytics path: {ultralytics.__file__}")
-print(f"[*INFO*] - imported ultralytics version: {ultralytics.__version__}")
+from ultralytics.customization.utils.checks import basic_environment_check
 
 from ultralytics.customization.engine.validator import base_validator_call
+from ultralytics.customization.utils.loss import v8_detection_loss_cal_loss_per_cls
+
 from ultralytics.models.yolo.detect.val import DetectionValidator
-
-DetectionValidator._original_call = DetectionValidator.__call__
-DetectionValidator.__call__ = base_validator_call
-
+from ultralytics.utils.loss import v8DetectionLoss
 from ultralytics import YOLO
 
 from third_party_packages.ichase_utils.dataset_tool import YOLODataset
+from third_party_packages.ichase_utils.general import data_to_json_str
+from third_party_packages.ichase_utils.hash import get_list_val_md5
+
+basic_environment_check()
+
+DetectionValidator._original_call = DetectionValidator.__call__
+DetectionValidator.__call__ = base_validator_call
+v8DetectionLoss.cal_loss_per_cls = v8_detection_loss_cal_loss_per_cls
 
 
 def main():
@@ -43,6 +45,8 @@ def main():
 
     yolo_ds = YOLODataset(ds_dir)
     print(f"[*INFO*] - {ds_dir.name} yolo dataset info:\n{yolo_ds.info_df}\n")
+    print(f"[*INFO*] - all_image_paths_val_hash: {yolo_ds.get_all_image_paths_val_hash()}")
+    print(f"[*INFO*] - all_label_paths_val_hash: {yolo_ds.get_all_label_paths_val_hash()}\n")
 
     epochs = 100
     batch = 8
