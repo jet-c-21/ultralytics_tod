@@ -26,6 +26,7 @@ from ultralytics.utils.loss import v8DetectionLoss
 from ultralytics import YOLO
 
 from third_party_packages.ichase_utils.dataset_tool import YOLODataset
+from third_party_packages.ichase_utils.file_tool import get_file_content_hash
 
 basic_environment_check()
 
@@ -43,7 +44,7 @@ def main():
 
     yolo_ds = YOLODataset(ds_dir)
     print(f"[*INFO*] - {ds_dir.name} yolo dataset info:\n{yolo_ds.info_df}\n")
-    print(f"[*INFO*] - all_image_paths_val_hash: {yolo_ds.get_all_image_paths_val_hash()}")
+    print(f"[*INFO*] - all_image_paths_val_hash: {yolo_ds.get_all_images_hash()}")
     print(f"[*INFO*] - all_label_paths_val_hash: {yolo_ds.get_all_label_paths_val_hash()}\n")
 
     epochs = 100
