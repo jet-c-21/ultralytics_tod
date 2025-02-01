@@ -183,5 +183,5 @@ def v8_detection_loss_cal_loss_per_cls(self: v8DetectionLoss,
 
     target_scores_sum = max(target_scores.sum(), 1)
 
-    # 
+    # Iterate over each unique class
 
