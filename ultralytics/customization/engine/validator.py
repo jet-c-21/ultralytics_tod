@@ -128,7 +128,7 @@ def base_validator_call(self: BaseValidator, trainer=None, model=None):
 
     Executes validation process, running inference on dataloader and computing performance metrics.
     """
-    _msg = f"running customization BaseValidator.__call__() with class instance: {self}"
+    _msg = f"evoked customization BaseValidator.__call__() with class instance: {self}"
     LOGGER.info(_msg)
 
     self.training = trainer is not None
@@ -182,7 +182,7 @@ def base_validator_call(self: BaseValidator, trainer=None, model=None):
         model.warmup(imgsz=(1 if pt else self.args.batch, 3, imgsz, imgsz))  # warmup
 
     self.run_callbacks("on_val_start")
-    dt = (
+    dt = (  # delta time
         Profile(device=self.device),
         Profile(device=self.device),
         Profile(device=self.device),
@@ -191,7 +191,7 @@ def base_validator_call(self: BaseValidator, trainer=None, model=None):
     bar = TQDM(self.dataloader, desc=self.get_desc(), total=len(self.dataloader))
     self.init_metrics(de_parallel(model))
     self.jdict = []  # empty before each val
-    loss_per_cls = {}
+    loss_per_cls = {}  # custom dict for loss per class
     for batch_i, batch in enumerate(bar):
         self.run_callbacks("on_val_batch_start")
         self.batch_i = batch_i
