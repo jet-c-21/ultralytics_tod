@@ -153,7 +153,11 @@ def v8_detection_loss_cal_loss_per_cls(self: v8DetectionLoss,
     targets = self.preprocess(targets.to(self.device), batch_size, scale_tensor=imgsz[[1, 0, 1, 0]])
     """
     after preprocess, the shape of targets is in format:
-        [batch_size, max_bbox_count__across_all_images_in_this_batch, target_attribute_cls_x1_y1_x2_y2]   
+        [
+            batch_size, 
+            max_bbox_count_in_single_img_across_all_images_in_this_batch, 
+            target_attribute_cls_x1_y1_x2_y2,
+        ]   
         in my case the shape of target is (16, 22, 5)
     """
 
@@ -184,4 +188,9 @@ def v8_detection_loss_cal_loss_per_cls(self: v8DetectionLoss,
     target_scores_sum = max(target_scores.sum(), 1)
 
     # Iterate over each unique class
+    mask_gt_bool = mask_gt.to(device=gt_labels.device, dtype=torch.bool)
+    unique_classes = torch.unique(gt_labels[mask_gt_bool])
 
+    assert unique_classes == batch["cls"].unique(), "unique_classes != batch['cls'].unique()"]
+
+    pass
